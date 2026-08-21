@@ -31,7 +31,6 @@ class Review extends Model
     }
 
     // レビューに対していいねしたユーザー一覧（多対多）
-
     public function likedByUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'review_likes')->withTimestamps();

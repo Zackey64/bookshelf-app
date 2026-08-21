@@ -1,66 +1,174 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## プロジェクト名
+COACHTECH 書籍レビューアプリ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 概要
+このプロジェクトは、バックエンド開発の基礎力を身につけるため、なるべくAIを使わずに作成したお問い合わせWebアプリケーションです。
+書籍情報の閲覧からレビュー、いいね操作が可能。
+ログイン時には、書籍情報の登録や編集やジャンルの操作が可能。
+また、APIでの操作が可能。
+Bladeはテンプレートを使用します。
 
-## About Laravel
+## ＥＲ図
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```mermaid
+erDiagram
+    users ||--o{ reviews : "1対多 (投稿する)"
+    users ||--o{ favorites : "1対多"
+    users ||--o{ review_likes : "1対多 (いいねする)"
+    
+    books ||--o{ reviews : "1対多 (レビューされる)"
+    books ||--o{ favorites : "1対多"
+    books ||--o{ book_genre : "1対多"
+    
+    genres ||--o{ book_genre : "1対多"
+    
+    reviews ||--o{ review_likes : "1対多"
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+    users {
+        bigint id PK
+        string name
+        string email
+        timestamp email_verified_at
+        string password
+        string remember_token
+        timestamps created_at
+        timestamps updated_at
+    }
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    books {
+        bigint id PK
+        string title
+        string author
+        string isbn
+        date published_date
+        text description
+        string image_url
+        timestamps created_at
+        timestamps updated_at
+    }
 
-## Learning Laravel
+    genres {
+        bigint id PK
+        string name
+        timestamps created_at
+        timestamps updated_at
+    }
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    book_genre {
+        bigint id PK
+        bigint book_id FK
+        bigint genre_id FK
+        timestamps created_at
+        timestamps updated_at
+    }
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    reviews {
+        bigint id PK
+        bigint book_id FK
+        bigint user_id FK
+        tinyint rating
+        text comment
+        timestamps created_at
+        timestamps updated_at
+    }
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    favorites {
+        bigint id PK
+        bigint user_id FK
+        bigint book_id FK
+        timestamps created_at
+        timestamps updated_at
+    }
 
-## Laravel Sponsors
+    review_likes {
+        bigint id PK
+        bigint review_id FK
+        bigint user_id FK
+        timestamps created_at
+        timestamps updated_at
+    }
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
 
-## Contributing
+## 環境構築手順
+### リポジトリをクローン
+```bash
+git clone https://github.com/Zackey64/bookshelf-app.git
+```
+### .envファイルの準備
+.env.example をコピーして .env を作成
+```bash
+cp .env.example .env
+```
+Sail向けではないため、以下のように変更
+```.env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
+### Composer依存パッケージのインストール
+vendorディレクトリが存在しないため、以下を実行して、コンテナ内で `composer install` を実行
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs
+```
+### Laravel Sailの起動
+```bash
+./vendor/bin/sail up -d
+```
+### アプリケーションキーの生成
+```bash
+sail artisan key:generate
+```
+### データベースのマイグレーションと初期データ投入
+```bash
+sail artisan migrate:fresh --seed
+```
+### フロントエンドのビルド
+```bash
+sail npm install
+sail npm install alpinejs
+sail npm run dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+## 使用技術
+### フロントエンド
+- Blade
+- Tailwind CSS
+### PHP
+- Laravel
+- Laravel Pint
+- Laravel Fortify
+- PHP Unit
+### Docker
+- Laravel Sail
+### ツール
+- Git/GitHub
+- VScode
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## APIエンドポイント一覧
+| メソッド | パス | 概要 | 認証 |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/v1/books` | 書籍一覧を取得 | 不要 |
+| **GET** | `/api/v1/books/{book}` | 書籍詳細を取得 | 不要 |
+| **POST** | `/api/v1/books` | 書籍を新規登録 | 不要 |
+| **PUT** | `/api/v1/books/{book}` | 書籍を更新 | 不要 |
+| **DELETE** | `/api/v1/books/{book}` | 書籍を削除 | 不要 |
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 開発環境URL
+- Laravel : http://localhost
+- phpMyAdmin : http://localhost:8080
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 作成者
+Zackey64

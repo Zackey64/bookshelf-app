@@ -17,16 +17,15 @@ class ReviewLikeSeeder extends Seeder
         $users = User::all();
         $reviews = Review::all();
 
-
+        // 各レビューに0〜3人のユーザーがいいね（自分のレビューを除く）
         foreach ($reviews as $review) {
             // 自分でない
             $likableUsers = $users->where('id', '!=', $review->user_id);
-            // 
             $userCount = rand(0, 3);
             if ($userCount > 0) {
-                    // ランダムにピックアップ
-                    $likerUserIds = $likableUsers->random($userCount)->pluck('id')->toArray();
-                    $review->likedByUsers()->syncWithoutDetaching($likerUserIds);
+                // ユーザーをランダムにピックアップ
+                $likerUserIds = $likableUsers->random($userCount)->pluck('id')->toArray();
+                $review->likedByUsers()->syncWithoutDetaching($likerUserIds);
             }
         }
     }

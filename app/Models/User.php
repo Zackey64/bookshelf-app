@@ -45,6 +45,12 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    // ユーザーが登録（作成）した書籍一覧（1対多の子）
+    public function books(): HasMany
+    {
+        return $this->hasMany(Book::class);
+    }
+
     // ユーザーが投稿したレビュー一覧（1対多）
     public function reviews(): HasMany
     {

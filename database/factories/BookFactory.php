@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Book;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class BookFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::factory(),
             'title' => fake()->realText(20).'の本', // 20文字程度のタイトル風テキスト
             'author' => fake()->name(),
             'isbn' => fake()->numerify('9784#########'), // 9784から始まる13桁の数字

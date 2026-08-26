@@ -16,7 +16,6 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
             'isbn' => ['required', 'string', 'isbn:13', 'unique:books,isbn'],
@@ -33,7 +32,6 @@ class StoreBookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            //
             'title.required' => 'タイトルは必須です。',
             'author.required' => '著者名は必須です。',
             'isbn.required' => 'ISBNは必須です。',

@@ -18,13 +18,13 @@ class StoreBookRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['required', 'string', 'isbn:13', 'unique:books,isbn'],
+            'isbn' => ['required', 'string', 'regex:/^[0-9]{13}$/', 'unique:books,isbn'],
             'published_date' => ['required', 'date'],
             'image_url' => ['nullable', 'string', 'url'],
             'description' => ['nullable', 'string', 'max:255'],
             //
-            'genre_ids' => ['required', 'array'],
-            'genre_ids.*' => ['integer', 'exists:genres,id', 'distinct'],
+            'genres' => ['required', 'array'],
+            'genres.*' => ['integer', 'exists:genres,id', 'distinct'],
         ];
     }
 
@@ -41,8 +41,8 @@ class StoreBookRequest extends FormRequest
             'published_date.date' => '正しい日付の形式で入力してください。',
             'image_url.required' => '画像URLは必須です。',
             'image_url.url' => '正しいURL形式で入力してください。',
-            'genre_ids.required' => 'ジャンルを最低1つ選択してください。',
-            'genre_ids.*.exists' => '選択されたジャンルが正しくありません。',
+            'genres.required' => 'ジャンルを最低1つ選択してください。',
+            'genres.*.exists' => '選択されたジャンルが正しくありません。',
         ];
     }
 }

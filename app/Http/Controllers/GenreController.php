@@ -39,7 +39,7 @@ class GenreController extends Controller
     public function show(Genre $genre)
     {
         // ジャンルに紐づいている書籍を取得
-        $books = $genre->books()->latest() > paginate(10);
+        $books = $genre->books()->latest()->paginate(10);
 
         // 画面表示
         return view('genres.show', compact('genre', 'books'));

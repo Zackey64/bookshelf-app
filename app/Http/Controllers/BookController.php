@@ -40,7 +40,7 @@ class BookController extends Controller
         ]);
         $book->genres()->attach($request->validated('genres'));
 
-        return redirect()->route('books.show', $book)->with('success', '書籍を登録しました。');
+        return redirect()->route('books.index', $book)->with('success', '書籍を登録しました。');
     }
 
     // 書籍詳細画面
@@ -78,7 +78,7 @@ class BookController extends Controller
         ]);
         $book->genres()->sync($validated['genres']);
 
-        return redirect()->route('books.show', $book)->with('success', '書籍を更新しました。');
+        return redirect()->route('books.index', $book)->with('success', '書籍を更新しました。');
     }
 
     // 書籍削除処理

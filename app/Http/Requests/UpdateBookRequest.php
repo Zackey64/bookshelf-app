@@ -21,13 +21,13 @@ class UpdateBookRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['required', 'string', 'regex:/^[0-9]{13}$/', Rule::unique('books', 'isbn')->ignore($bookId)],
+            'isbn' => ['required',  'regex:/^[0-9]{13}$/', Rule::unique('books', 'isbn')->ignore($bookId)],
             'published_date' => ['required', 'date'],
-            'image_url' => ['nullable', 'string', 'url'],
+            'image_url' => ['nullable', 'url'],
             'description' => ['nullable', 'string', 'max:255'],
             //
             'genres' => ['required', 'array'],
-            'genres.*' => ['integer', 'exists:genres,id'],
+            'genres.*' => ['integer', 'exists:genres,id', 'distinct'],
         ];
     }
 
@@ -38,11 +38,10 @@ class UpdateBookRequest extends FormRequest
             'title.required' => 'タイトルは必須です。',
             'author.required' => '著者名は必須です。',
             'isbn.required' => 'ISBNは必須です。',
-            'isbn.isbn' => '正しい13桁のISBNコードを入力してください。',
+            'isbn.regex' => '13桁の数字で入力してください。',
             'isbn.unique' => 'このISBNは既に登録されています。',
             'published_date.required' => '出版日は必須です。',
             'published_date.date' => '正しい日付の形式で入力してください。',
-            'image_url.required' => '画像URLは必須です。',
             'image_url.url' => '正しいURL形式で入力してください。',
             'genres.required' => 'ジャンルを最低1つ選択してください。',
             'genres.*.exists' => '選択されたジャンルが正しくありません。',

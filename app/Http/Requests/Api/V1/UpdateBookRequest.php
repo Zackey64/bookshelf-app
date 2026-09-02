@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreBookRequest extends FormRequest
+class UpdateBookRequest extends FormRequest
 {
     //
     public function authorize(): bool
@@ -15,10 +16,14 @@ class StoreBookRequest extends FormRequest
     // バリテーションルールメソッド
     public function rules(): array
     {
+        $bookId = $this->route('book');
+
         return [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            //
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['required', 'regex:/^[0-9]{13}$/', 'unique:books,isbn'],
+            'isbn' => ['required',  'regex:/^[0-9]{13}$/', Rule::unique('books', 'isbn')->ignore($bookId)],
             'published_date' => ['required', 'date'],
             'image_url' => ['nullable', 'url'],
             'description' => ['nullable', 'string', 'max:255'],
@@ -32,6 +37,9 @@ class StoreBookRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'user_id.required' => '登録者IDは必須です。',
+            'user_id.exists' => '指定された登録者が存在しません。',
+
             'title.required' => 'タイトルは必須です。',
             'title.max' => 'タイトルは255文字以内で入力してください。',
 

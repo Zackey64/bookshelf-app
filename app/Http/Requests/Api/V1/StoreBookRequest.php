@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,6 +16,8 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            //
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
             'isbn' => ['required', 'regex:/^[0-9]{13}$/', 'unique:books,isbn'],
@@ -32,6 +34,9 @@ class StoreBookRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'user_id.required' => '登録者IDは必須です。',
+            'user_id.exists' => '指定された登録者が存在しません。',
+
             'title.required' => 'タイトルは必須です。',
             'title.max' => 'タイトルは255文字以内で入力してください。',
 

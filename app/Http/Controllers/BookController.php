@@ -59,7 +59,7 @@ class BookController extends Controller
     {
         // 認可
         $this->authorize('update', $book);
-        
+
         $genres = Genre::all();
 
         return view('books.edit', compact('book', 'genres'));

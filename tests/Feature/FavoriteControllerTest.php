@@ -5,8 +5,6 @@ namespace Tests\Feature;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class FavoriteControllerTest extends TestCase
@@ -26,7 +24,6 @@ class FavoriteControllerTest extends TestCase
         $response->assertOk()->assertViewIs('favorites.index')->assertViewHas('books');
     }
 
-
     /** @test */
     public function index_お気に入りが0件の場合も表示できる(): void
     {
@@ -37,8 +34,6 @@ class FavoriteControllerTest extends TestCase
         // Assert
         $response->assertOk()->assertViewIs('favorites.index')->assertViewHas('books');
     }
-
-
 
     /** @test */
     public function toggle_お気に入りしてないときは登録する(): void
@@ -74,5 +69,4 @@ class FavoriteControllerTest extends TestCase
         ]);
 
     }
-
 }

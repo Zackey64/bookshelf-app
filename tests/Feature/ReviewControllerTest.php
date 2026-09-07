@@ -152,10 +152,7 @@ class ReviewControllerTest extends TestCase
         $review = Review::factory()->create([
             'book_id' => $book->id,
         ]);
-        DB::table('review_likes')->insert([
-            'user_id' => $user->id,
-            'review_id' => $review->id,
-        ]);
+        $user->likedReviews()->attach($review->id);
         // Act
         $response = $this->actingAs($user)->post(route('reviews.like', [$book, $review]));
         // Assert

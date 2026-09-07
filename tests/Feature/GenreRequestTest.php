@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class GenreRequestTest extends TestCase
@@ -52,8 +51,6 @@ class GenreRequestTest extends TestCase
         $response->assertSessionHasErrors(['name']);
     }
 
-
-
     /** @test */
     public function update_他のジャンルと同じ名前の場合はエラー(): void
     {
@@ -84,7 +81,4 @@ class GenreRequestTest extends TestCase
         // Assert
         $response->assertSessionDoesntHaveErrors();
     }
-
-
-
 }

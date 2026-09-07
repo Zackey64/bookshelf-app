@@ -6,7 +6,6 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class BookRequestTest extends TestCase
@@ -48,7 +47,7 @@ class BookRequestTest extends TestCase
     }
 
     /** @test */
-    public function update_自身のISBNはエラーにならない(): void
+    public function update_自身の_isb_nはエラーにならない(): void
     {
         $user = User::factory()->create();
         $genre = Genre::factory()->create();
@@ -68,7 +67,7 @@ class BookRequestTest extends TestCase
     }
 
     /** @test */
-    public function update_他の書籍と同じISBNの場合はエラー(): void
+    public function update_他の書籍と同じ_isb_nの場合はエラー(): void
     {
         $user = User::factory()->create();
         $genre = Genre::factory()->create();
@@ -88,8 +87,4 @@ class BookRequestTest extends TestCase
 
         $response->assertUnprocessable()->assertJsonValidationErrors(['isbn']);
     }
-
-
-
-
 }

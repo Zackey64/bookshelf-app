@@ -47,7 +47,7 @@ class BookRequestTest extends TestCase
     }
 
     /** @test */
-    public function update_自身の_isb_nはエラーにならない(): void
+    public function update_元の書籍と同じ_isb_nの場合はエラーにならない(): void
     {
         $user = User::factory()->create();
         $genre = Genre::factory()->create();

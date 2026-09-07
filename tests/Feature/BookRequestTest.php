@@ -30,7 +30,7 @@ class BookRequestTest extends TestCase
     }
 
     /** @test */
-    public function store_他の書籍と同じ_isb_nの場合はエラー(): void
+    public function store_他の書籍と同じ場合はエラー(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -73,7 +73,7 @@ class BookRequestTest extends TestCase
     }
 
     /** @test */
-    public function update_他の書籍と同じ_isb_nの場合はエラー(): void
+    public function update_他の書籍と同じ場合はエラー(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -96,7 +96,7 @@ class BookRequestTest extends TestCase
     }
 
     /** @test */
-    public function update_元の書籍と同じ_isb_nの場合はエラーにならない(): void
+    public function update_元の書籍と同じ場合はエラーにならない(): void
     {
         // Arrange
         $user = User::factory()->create();

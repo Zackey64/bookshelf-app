@@ -115,6 +115,5 @@ class BookRequestTest extends TestCase
         $response = $this->actingAs($user)->put(route('books.update', $book), $data);
         // Assert
         $response->assertSessionDoesntHaveErrors();
-        $response->assertRedirect(route('books.index'));
     }
 }

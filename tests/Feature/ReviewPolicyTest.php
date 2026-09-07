@@ -2,25 +2,25 @@
 
 namespace Tests\Feature;
 
-use App\Models\Book;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class BookPolicyTest extends TestCase
+class ReviewPolicyTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function update_本人のみ更新できる(): void
+    public function update_本人は更新できる(): void
     {
         // Arrange
         $user = User::factory()->create();
-        $book = Book::factory()->create([
+        $review = Review::factory()->create([
             'user_id' => $user->id,
         ]);
         // Assert
-        $this->assertTrue($user->can('update', $book));
+        $this->assertTrue($user->can('update', $review));
     }
 
     /** @test */
@@ -29,11 +29,11 @@ class BookPolicyTest extends TestCase
         // Arrange
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
-        $book = Book::factory()->create([
+        $review = Review::factory()->create([
             'user_id' => $otherUser->id,
         ]);
         // Assert
-        $this->assertFalse($user->can('update', $book));
+        $this->assertFalse($user->can('update', $review));
     }
 
     /** @test */
@@ -41,11 +41,11 @@ class BookPolicyTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $book = Book::factory()->create([
+        $review = Review::factory()->create([
             'user_id' => $user->id,
         ]);
         // Assert
-        $this->assertTrue($user->can('delete', $book));
+        $this->assertTrue($user->can('delete', $review));
     }
 
     /** @test */
@@ -54,10 +54,10 @@ class BookPolicyTest extends TestCase
         // Arrange
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
-        $book = Book::factory()->create([
+        $review = Review::factory()->create([
             'user_id' => $otherUser->id,
         ]);
         // Assert
-        $this->assertFalse($user->can('delete', $book));
+        $this->assertFalse($user->can('delete', $review));
     }
 }

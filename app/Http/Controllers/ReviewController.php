@@ -19,7 +19,7 @@ class ReviewController extends Controller
             'comment' => $validated['comment'],
         ]);
 
-        return back()->with('success', 'レビューを投稿しました。');
+        return redirect()->route('books.show', $book)->with('success', 'レビューを投稿しました。');
     }
 
     // レビュー編集画面
@@ -62,11 +62,11 @@ class ReviewController extends Controller
         if ($likedReviews->where('reviews.id', $review->id)->exists()) {
             $likedReviews->detach($review->id);
 
-            return back()->with('success', 'いいねを取り消しました。');
+            return redirect()->route('books.show', $review->book)->with('success', 'いいねを取り消しました。');
         }
         // いいねされていない→登録
         $likedReviews->attach($review->id);
 
-        return back()->with('success', 'レビューにいいねしました。');
+        return redirect()->route('books.show', $review->book)->with('success', 'レビューにいいねしました。');
     }
 }

@@ -18,30 +18,48 @@ class ReviewSeeder extends Seeder
         $users = User::all();
         $books = Book::all();
 
-        // 5人のユーザーが11冊の書籍に対してレビューを投稿（2〜4件のレビュー）
-        // 最低２件振り分け（２２件）
+        $comments = [
+            5 => [
+                '素晴らしい本でした！',
+                '人生が変わりました。',
+                '何度も読み返しています。',
+            ],
+            4 => [
+                'とても参考になりました。',
+                '読みやすくておすすめです。',
+                '期待通りの内容でした。',
+            ],
+            3 => [
+                '普通でした。',
+                '可もなく不可もなく。',
+                '期待したほどではなかった。',
+            ],
+            2 => [
+                '少し期待外れでした。',
+                '内容が薄い印象。',
+                'もう少し深掘りしてほしかった。',
+            ],
+            1 => [
+                '残念ながら合いませんでした。',
+                '期待と違いました。',
+            ],
+        ];
+
+        // 書籍に対して2〜4人のユーザーがレビューを投稿
         foreach ($books as $book) {
-            $selectedUsers = $users->random(2);
-            foreach ($selectedUsers as $user) {
+            $reviewCount = rand(2, 4);
+            $reviewUsers = $users->random($reviewCount);
+            foreach ($reviewUsers as $user) {
+                $rating = rand(1, 5);
+
                 Review::factory()->create([
                     'book_id' => $book->id,
                     'user_id' => $user->id,
-                    'rating' => rand(3, 5),
+                    'rating' => $rating,
+                    'comment' => fake()->randomElement($comments[$rating]),
                 ]);
             }
         }
-        // 残りを０～２件振り分け（１０件）
-        while (Review::count() < 32) {
-            $selectedBook = $books->random();
-            if ($selectedBook->reviews()->count() >= 4) {
-                continue;
-            }
-            $selectedUsers = $users->random();
-            Review::factory()->create([
-                'book_id' => $selectedBook->id,
-                'user_id' => $selectedUsers->id,
-                'rating' => rand(3, 5),
-            ]);
-        }
+
     }
 }

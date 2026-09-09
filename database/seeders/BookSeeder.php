@@ -15,7 +15,7 @@ class BookSeeder extends Seeder
     public function run(): void
     {
         // 登録者
-        $user = User::first();
+        $users = User::all();
 
         // 事前に登録されているジャンルを取得
         $genres = Genre::all();
@@ -23,7 +23,7 @@ class BookSeeder extends Seeder
         // 指定された11件を定義
         $booksData = [
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => '吾輩は猫である',
                 'author' => '夏目漱石',
                 'isbn' => '9784101010014',
@@ -33,7 +33,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=1',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => '人を動かす',
                 'author' => 'D・カーネギー',
                 'isbn' => '9784422100524',
@@ -43,7 +43,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=2',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => 'リーダブルコード',
                 'author' => 'Dustin Boswell',
                 'isbn' => '9784873115658',
@@ -53,7 +53,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=3',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => '7つの習慣',
                 'author' => 'スティーブン・R・コヴィー',
                 'isbn' => '9784863940246',
@@ -63,7 +63,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=4',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => '坊っちゃん',
                 'author' => '夏目漱石',
                 'isbn' => '9784101010021',
@@ -73,7 +73,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=5',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => 'サピエンス全史',
                 'author' => 'ユヴァル・ノア・ハラリ',
                 'isbn' => '9784309226712',
@@ -83,7 +83,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=6',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => 'Clean Code',
                 'author' => 'Robert C. Martin',
                 'isbn' => '9784048930598',
@@ -93,7 +93,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=7',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => '嫌われる勇気',
                 'author' => '岸見一郎・古賀史健',
                 'isbn' => '9784478025819',
@@ -103,7 +103,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=8',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => '火花',
                 'author' => '又吉直樹',
                 'isbn' => '9784163902302',
@@ -113,7 +113,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=9',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => 'FACTFULNESS',
                 'author' => 'ハンス・ロスリング',
                 'isbn' => '9784822289607',
@@ -123,7 +123,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=10',
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users->random()->id,
                 'title' => 'コンテナ物語',
                 'author' => 'マルク・レビンソン',
                 'isbn' => '9784822251468',

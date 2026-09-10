@@ -19,6 +19,8 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->string('status');
             $table->timestamps();
+            // 複合ユニーク制約
+            $table->unique(['book_id', 'user_id']);
         });
     }
 

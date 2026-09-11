@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
+    Route::get('/books/isbn/{isbn}', [BookController::class, 'isbn'])->name('books.isbn');
+
     // ジャンル
     Route::resource('genres', GenreController::class);
 

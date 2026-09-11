@@ -22,6 +22,10 @@ class Book extends Model
         'description',
     ];
 
+    protected $casts = [
+        'published_date' => 'date',
+    ];
+
     // この書籍を登録したユーザー（1対多の親）
     public function user(): BelongsTo
     {

@@ -6,15 +6,56 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
+use Illuminate\Http\JsonResponse;
 
 class BookController extends Controller
 {
     // 書籍一覧画面
     public function index()
     {
-        $books = Book::with('genres')->latest()->paginate(10);
 
-        return view('books.index', compact('books'));
+        $query = Book::query()->with('genres')->withAvg('reviews', 'rating');
+
+        // キーワード検索
+        if (request('keyword')) {
+            $keyword = request('keyword');
+            $query->where(
+                function ($query) use ($keyword) {
+                    $query->where('title', 'like', "%{$keyword}%")->orWhere('author', 'like', "%{$keyword}%");
+                }
+            );
+        }
+
+        // ジャンル検索
+        if (request('genre')) {
+            $query->whereHas('genres',
+                function ($query) {
+                    $query->where('genres.id', request('genre'));
+                }
+            );
+        }
+
+        // 並び順
+        switch (request('sort', 'newest')) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'rating':
+                $query->orderByDesc('reviews_avg_rating');
+                break;
+            case 'title':
+                $query->orderBy('title');
+                break;
+            case 'newest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        $books = $query->paginate(10)->withQueryString();
+        $genres = Genre::orderBy('name')->get();
+
+        return view('books.index', compact('books', 'genres'));
     }
 
     // 書籍登録画面
@@ -29,12 +70,11 @@ class BookController extends Controller
     public function store(StoreBookRequest $request)
     {
         $validated = $request->validated();
-
         $book = auth()->user()->books()->create([
             'title' => $validated['title'],
             'author' => $validated['author'],
             'isbn' => $validated['isbn'],
-            'published_date' => $validated['published_date'],
+            'published_date' => $validated['published_date'] ?? null,
             'image_url' => $validated['image_url'] ?? null,
             'description' => $validated['description'] ?? null,
         ]);
@@ -59,7 +99,6 @@ class BookController extends Controller
     {
         // 認可
         $this->authorize('update', $book);
-
         $genres = Genre::all();
 
         return view('books.edit', compact('book', 'genres'));
@@ -70,13 +109,12 @@ class BookController extends Controller
     {
         // 認可
         $this->authorize('update', $book);
-
         $validated = $request->validated();
         $book->update([
             'title' => $validated['title'],
             'author' => $validated['author'],
             'isbn' => $validated['isbn'],
-            'published_date' => $validated['published_date'],
+            'published_date' => $validated['published_date'] ?? null,
             'image_url' => $validated['image_url'] ?? null,
             'description' => $validated['description'] ?? null,
         ]);
@@ -93,5 +131,14 @@ class BookController extends Controller
         $book->delete();
 
         return redirect()->route('books.index')->with('success', '書籍を削除しました。');
+    }
+
+    // ISBN検索
+    public function isbn(string $isbn): JsonResponse
+    {
+
+        // あとで
+
+        return response()->json([]);
     }
 }

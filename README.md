@@ -24,6 +24,11 @@ erDiagram
     
     reviews ||--o{ review_likes : "1対多"
 
+    users ||--o{ reading_plans : "1対多"
+    books ||--o{ reading_plans : "1対多"
+
+
+
     users {
         bigint id PK
         string name
@@ -84,6 +89,17 @@ erDiagram
         bigint id PK
         bigint review_id FK
         bigint user_id FK
+        timestamps created_at
+        timestamps updated_at
+    }
+
+    reading_plans {
+        bigint id PK
+        bigint book_id FK
+        bigint user_id FK
+        date target_date
+        timestamp completed_at
+        string status
         timestamps created_at
         timestamps updated_at
     }

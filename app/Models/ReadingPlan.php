@@ -26,13 +26,13 @@ class ReadingPlan extends Model
         'status' => ReadingPlanStatus::class, // 列挙型enum
     ];
 
-    // この読書計画に登録される複数のユーザー（1対多の親）
+    // 1つのReadingPlanは1人のUserに所属する（1対多の親）
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // この読書計画に登録される複数の書籍（1対多の親）
+    // 1つのReadingPlanは1冊のBookを対象にする（1対多の親）
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);

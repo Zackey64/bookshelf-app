@@ -22,4 +22,12 @@ class ReadingPlanPolicy
     {
         return $user->id === $readingPlan->user_id;
     }
+
+    /**
+     * 完了ができるのは本人だけ
+     */
+    public function complete(User $user, ReadingPlan $readingPlan): bool
+    {
+        return $user->id === $readingPlan->user_id;
+    }
 }

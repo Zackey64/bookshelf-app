@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\ReadingPlan;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -57,5 +58,19 @@ class BookModelTest extends TestCase
         $book->favoritedByUsers()->attach($user);
         // Assert
         $this->assertTrue($book->favoritedByUsers->contains($user));
+    }
+
+    // 【応用追加】
+
+    /** @test */
+    public function reading_plans_読書計画と１対多の関係を持つ(): void
+    {
+        // Arrange
+        $book = Book::factory()->create();
+        $readingPlan = ReadingPlan::factory()->create([
+            'book_id' => $book->id,
+        ]);
+        // Assert
+        $this->assertTrue($book->readingPlans->contains($readingPlan));
     }
 }

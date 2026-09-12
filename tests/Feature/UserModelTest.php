@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Book;
+use App\Models\ReadingPlan;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -56,5 +57,19 @@ class UserModelTest extends TestCase
         $user->likedReviews()->attach($review);
         // Assert
         $this->assertTrue($user->likedReviews->contains($review));
+    }
+
+    // 【応用追加】
+
+    /** @test */
+    public function reading_plans_読書計画と１対多の関係を持つ(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $readingPlan = ReadingPlan::factory()->create([
+            'user_id' => $user->id,
+        ]);
+        // Assert
+        $this->assertTrue($user->readingPlans->contains($readingPlan));
     }
 }

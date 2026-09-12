@@ -19,12 +19,10 @@ class UpdateBookRequest extends FormRequest
         $bookId = $this->route('book');
 
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
-            //
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
             'isbn' => ['required',  'regex:/^[0-9]{13}$/', Rule::unique('books', 'isbn')->ignore($bookId)],
-            'published_date' => ['required', 'date'],
+            'published_date' => ['nullable', 'date'],
             'image_url' => ['nullable', 'url'],
             'description' => ['nullable', 'string', 'max:255'],
             //
@@ -37,9 +35,6 @@ class UpdateBookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => '登録者IDは必須です。',
-            'user_id.exists' => '指定された登録者が存在しません。',
-
             'title.required' => 'タイトルは必須です。',
             'title.max' => 'タイトルは255文字以内で入力してください。',
 
@@ -50,7 +45,6 @@ class UpdateBookRequest extends FormRequest
             'isbn.regex' => '13桁の数字で入力してください。',
             'isbn.unique' => 'このISBNは既に登録されています。',
 
-            'published_date.required' => '出版日は必須です。',
             'published_date.date' => '正しい日付の形式で入力してください。',
 
             'image_url.url' => '正しいURL形式で入力してください。',

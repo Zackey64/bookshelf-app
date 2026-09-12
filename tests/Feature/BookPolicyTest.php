@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Book;
 use App\Models\User;
+use App\Policies\BookPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,8 +20,9 @@ class BookPolicyTest extends TestCase
         $book = Book::factory()->create([
             'user_id' => $user->id,
         ]);
+        $policy = new BookPolicy;
         // Assert
-        $this->assertTrue($user->can('update', $book));
+        $this->assertTrue($policy->update($user, $book));
     }
 
     /** @test */
@@ -32,8 +34,9 @@ class BookPolicyTest extends TestCase
         $book = Book::factory()->create([
             'user_id' => $otherUser->id,
         ]);
+        $policy = new BookPolicy;
         // Assert
-        $this->assertFalse($user->can('update', $book));
+        $this->assertFalse($policy->update($user, $book));
     }
 
     /** @test */
@@ -44,8 +47,9 @@ class BookPolicyTest extends TestCase
         $book = Book::factory()->create([
             'user_id' => $user->id,
         ]);
+        $policy = new BookPolicy;
         // Assert
-        $this->assertTrue($user->can('delete', $book));
+        $this->assertTrue($policy->delete($user, $book));
     }
 
     /** @test */
@@ -57,7 +61,8 @@ class BookPolicyTest extends TestCase
         $book = Book::factory()->create([
             'user_id' => $otherUser->id,
         ]);
+        $policy = new BookPolicy;
         // Assert
-        $this->assertFalse($user->can('delete', $book));
+        $this->assertFalse($policy->delete($user, $book));
     }
 }

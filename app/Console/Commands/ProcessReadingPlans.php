@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 class ProcessReadingPlans extends Command
 {
     protected $signature = 'app:process-reading-plans';
+
     protected $description = '読書計画の期限更新とリマインダー通知処理';
 
     public function handle()

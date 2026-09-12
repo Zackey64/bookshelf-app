@@ -10,9 +10,7 @@ use App\Models\Book;
 
 class BookController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // 一覧
     public function index()
     {
         $books = Book::with('genres')->paginate(10);
@@ -20,27 +18,7 @@ class BookController extends Controller
         return BookResource::collection($books);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBookRequest $request)
-    {
-        $validated = $request->validated();
-
-        $genres = $validated['genres'];
-        unset($validated['genres']);
-
-        $book = Book::create($validated);
-
-        $book->genres()->sync($genres);
-        $book->load('genres');
-
-        return new BookResource($book)->response()->setStatusCode(201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
+    // 詳細
     public function show(Book $book)
     {
         $book->load('genres');
@@ -48,11 +26,26 @@ class BookController extends Controller
         return new BookResource($book);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // 作成
+    public function store(StoreBookRequest $request)
+    {
+        $validated = $request->validated();
+
+        $genres = $validated['genres'];
+        unset($validated['genres']);
+
+        $book = $request->user()->books()->create($validated);
+
+        $book->genres()->sync($genres);
+        $book->load('genres');
+
+        return new BookResource($book)->response()->setStatusCode(201);
+    }
+
+    // 編集
     public function update(UpdateBookRequest $request, Book $book)
     {
+        $this->authorize('update', $book);
         $validated = $request->validated();
 
         $genres = $validated['genres'];
@@ -66,11 +59,10 @@ class BookController extends Controller
         return new BookResource($book)->response()->setStatusCode(200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // 削除
     public function destroy(Book $book)
     {
+        $this->authorize('delete', $book);
         $book->delete();
 
         return response()->json(null, 204);

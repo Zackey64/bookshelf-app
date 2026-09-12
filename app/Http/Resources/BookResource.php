@@ -18,14 +18,10 @@ class BookResource extends JsonResource
             'published_date' => $this->published_date,
             'image_url' => $this->image_url,
             'description' => $this->description,
-            // わざわざGenreResourceつくるの嫌なんでラムダで
-            'genres' => $this->whenLoaded(
-                'genres',
-                fn () => $this->genres->map(fn ($genre) => [
-                    'id' => $genre->id,
-                    'name' => $genre->name,
-                ])
-            ),
+            //
+            'genres' => $this->genres,
+            'average_rating' => $this->reviews_avg_rating,
+            'review_count' => $this->reviews_count,
         ];
     }
 }

@@ -173,13 +173,13 @@ sail npm run dev
 - VScode
 
 ## APIエンドポイント一覧
-| メソッド | パス | 概要 | 認証 |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/api/v1/books` | 書籍一覧を取得 | 不要 |
-| **GET** | `/api/v1/books/{book}` | 書籍詳細を取得 | 不要 |
-| **POST** | `/api/v1/books` | 書籍を新規登録 | 不要 |
-| **PUT** | `/api/v1/books/{book}` | 書籍を更新 | 不要 |
-| **DELETE** | `/api/v1/books/{book}` | 書籍を削除 | 不要 |
+| メソッド | パス | 概要 | 認証 | 認可 |
+| :--- | :--- | :--- | :--- | :--- |
+| **GET** | `/api/v1/books` | 書籍一覧を取得 | 不要 | 無 |
+| **GET** | `/api/v1/books/{book}` | 書籍詳細を取得 | 不要 | 無 |
+| **POST** | `/api/v1/books` | 書籍を新規登録 | 必要 | 無 |
+| **PUT** | `/api/v1/books/{book}` | 書籍を更新 | 必要 | 本人のみ |
+| **DELETE** | `/api/v1/books/{book}` | 書籍を削除 | 必要 | 本人のみ |
 
 
 ## 開発環境URL

@@ -13,7 +13,26 @@ class BookController extends Controller
     // 一覧
     public function index()
     {
-        $books = Book::with('genres')->paginate(10);
+        $query = Book::query()->with('genres')->withAvg('reviews', 'rating')->withCount('reviews');
+        // キーワード検索
+        if (request('keyword')) {
+            $keyword = request('keyword');
+            $query->where(function ($query) use ($keyword) {
+                $query->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('author', 'like', "%{$keyword}%");
+            });
+        }
+        // ジャンル絞り込み
+        if (request('genre')) {
+            $query->whereHas('genres', function ($query) {
+                $query->where('genres.id', request('genre'));
+            });
+        }
+
+        $books = $query
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return BookResource::collection($books);
     }

@@ -36,6 +36,14 @@ class BookControllerTest extends TestCase
     }
 
     /** @test */
+    public function index_検索できる(): void
+    {
+        // Arrange
+        // Act
+        // Assert
+    }
+
+    /** @test */
     public function show_書籍詳細を取得できる(): void
     {
         // Arrange

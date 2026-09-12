@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ReadingPlanStatus;
 use App\Http\Requests\StoreReadingPlanRequest;
 use App\Http\Requests\UpdateReadingPlanRequest;
 use App\Models\Book;
@@ -40,7 +41,7 @@ class ReadingPlanController extends Controller
         $request->user()->readingPlans()->create([
             'book_id' => $request->validated('book_id'),
             'target_date' => $request->validated('target_date'),
-            'status' => 'in_progress',
+            'status' => ReadingPlanStatus::InProgress,
         ]);
 
         return redirect()->route('reading-plans.index')->with('success', '読書計画を登録しました。');
@@ -78,7 +79,7 @@ class ReadingPlanController extends Controller
     {
         $this->authorize('complete', $readingPlan);
         $readingPlan->update([
-            'status' => 'completed',
+            'status' => ReadingPlanStatus::Completed,
             'completed_at' => now(),
         ]);
 

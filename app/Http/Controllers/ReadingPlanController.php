@@ -19,7 +19,7 @@ class ReadingPlanController extends Controller
         if (request('status')) {
             $query->where('status', request('status'));
         }
-        $readingPlans = $query->latest()->get();
+        $readingPlans = $query->orderBy('target_date')->get();
 
         return view('reading-plans.index', [
             'readingPlans' => $readingPlans,
@@ -59,8 +59,12 @@ class ReadingPlanController extends Controller
     // 読書計画編集処理
     public function update(UpdateReadingPlanRequest $request, ReadingPlan $readingPlan): RedirectResponse
     {
-        $this->authorize('update', $readingPlan);
-        $readingPlan->update($request->validated());
+        $data = $request->validated();
+        if ($readingPlan->status === ReadingPlanStatus::Expired) {
+            $data['status'] = ReadingPlanStatus::InProgress;
+            $data['completed_at'] = null;
+        }
+        $readingPlan->update($data);
 
         return redirect()->route('reading-plans.index')->with('success', '読書計画を更新しました。');
     }
@@ -69,6 +73,7 @@ class ReadingPlanController extends Controller
     public function destroy(ReadingPlan $readingPlan): RedirectResponse
     {
         $this->authorize('delete', $readingPlan);
+        auth()->user()->notifications()->where('data->reading_plan_id', $readingPlan->id)->delete();
         $readingPlan->delete();
 
         return redirect()->route('reading-plans.index')->with('success', '読書計画を削除しました。');

@@ -22,6 +22,7 @@ class BookResource extends JsonResource
             'genres' => $this->genres,
             'average_rating' => $this->reviews_avg_rating,
             'review_count' => $this->reviews_count,
+            'reviews' => $this->reviews,
         ];
     }
 }

@@ -36,11 +36,43 @@ class BookControllerTest extends TestCase
     }
 
     /** @test */
-    public function index_検索できる(): void
+    public function index_キーワード検索できる(): void
     {
         // Arrange
+        $matchingBook = Book::factory()->create([
+            'title' => '該当書籍',
+            'author' => '該当著者',
+        ]);
+        Book::factory()->create([
+            'title' => '異なる書籍',
+            'author' => '異なる著者',
+        ]);
         // Act
+        $response = $this->getJson('/api/v1/books?keyword=該当');
         // Assert
+        $response->assertOk()->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $matchingBook->id);
+    }
+
+    /** @test */
+    public function index_ジャンル検索できる(): void
+    {
+        // Arrange
+        $genre = Genre::factory()->create();
+        $matchingBook = Book::factory()->create([
+            'title' => '該当書籍',
+            'author' => '該当著者',
+        ]);
+        $matchingBook->genres()->attach($genre);
+        Book::factory()->create([
+            'title' => '異なる書籍',
+            'author' => '異なる著者',
+        ]);
+        // Act
+        $response = $this->getJson('/api/v1/books?genre='.$genre->id);
+        // Assert
+        $response->assertOk()->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $matchingBook->id);
     }
 
     /** @test */

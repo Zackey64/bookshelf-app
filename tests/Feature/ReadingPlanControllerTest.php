@@ -42,8 +42,26 @@ class ReadingPlanControllerTest extends TestCase
     public function index_検索できる(): void
     {
         // Arrange
+        $user = User::factory()->create();
+        $completedPlan = ReadingPlan::factory()->create([
+            'user_id' => $user->id,
+            'status' => ReadingPlanStatus::Completed,
+        ]);
+        ReadingPlan::factory()->create([
+            'user_id' => $user->id,
+            'status' => ReadingPlanStatus::InProgress,
+        ]);
         // Act
+        $response = $this->actingAs($user)->get(route('reading-plans.index', [
+            'status' => ReadingPlanStatus::Completed->value,
+        ]));
         // Assert
+        $response->assertOk()->assertViewIs('reading-plans.index')->assertViewHas('readingPlans',
+            function ($readingPlans) use ($completedPlan) {
+                return $readingPlans->count() === 1
+                    && $readingPlans->first()->id === $completedPlan->id;
+            }
+        );
     }
 
     /** @test */

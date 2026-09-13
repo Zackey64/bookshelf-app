@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ReadingPlanStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -17,7 +18,8 @@ class ReportController extends Controller
             ->selectRaw('COUNT(*) as total_reviews, AVG(rating) as average_rating')->first();
 
         // 読了冊数
-        $booksRead = $user->readingPlans()->where('status', 'completed')->count();
+        $booksRead = auth()->user()->readingPlans()
+            ->where('status', ReadingPlanStatus::Completed)->distinct('book_id')->count('book_id');
 
         // 評価分布
         $ratingDistribution = collect(range(1, 5))

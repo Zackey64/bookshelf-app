@@ -7,7 +7,6 @@ use App\Models\ReadingPlan;
 use App\Models\User;
 use App\Notifications\ReadingPlanReminderNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ReadingPlanReminderNotificationTest extends TestCase

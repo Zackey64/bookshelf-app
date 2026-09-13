@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Review;
 use App\Models\User;
+use App\Policies\ReviewPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,8 +20,9 @@ class ReviewPolicyTest extends TestCase
         $review = Review::factory()->create([
             'user_id' => $user->id,
         ]);
+        $policy = new ReviewPolicy;
         // Assert
-        $this->assertTrue($user->can('update', $review));
+        $this->assertTrue($policy->update($user, $review));
     }
 
     /** @test */
@@ -32,8 +34,9 @@ class ReviewPolicyTest extends TestCase
         $review = Review::factory()->create([
             'user_id' => $otherUser->id,
         ]);
+        $policy = new ReviewPolicy;
         // Assert
-        $this->assertFalse($user->can('update', $review));
+        $this->assertFalse($policy->update($user, $review));
     }
 
     /** @test */
@@ -44,8 +47,9 @@ class ReviewPolicyTest extends TestCase
         $review = Review::factory()->create([
             'user_id' => $user->id,
         ]);
+        $policy = new ReviewPolicy;
         // Assert
-        $this->assertTrue($user->can('delete', $review));
+        $this->assertTrue($policy->delete($user, $review));
     }
 
     /** @test */
@@ -57,7 +61,8 @@ class ReviewPolicyTest extends TestCase
         $review = Review::factory()->create([
             'user_id' => $otherUser->id,
         ]);
+        $policy = new ReviewPolicy;
         // Assert
-        $this->assertFalse($user->can('delete', $review));
+        $this->assertFalse($policy->delete($user, $review));
     }
 }

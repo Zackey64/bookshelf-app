@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class BookControllerTest extends TestCase
@@ -33,6 +35,130 @@ class BookControllerTest extends TestCase
         $response = $this->actingAs($user)->get(route('books.index'));
         // Assert
         $response->assertOk()->assertViewIs('books.index')->assertViewHas('books');
+    }
+
+    /** @test */
+    public function index_キーワード検索できる(): void
+    {
+        // Arrange
+        $matchingBook = Book::factory()->create([
+            'title' => '該当書籍',
+            'author' => '該当著者',
+        ]);
+        Book::factory()->create([
+            'title' => '異なる書籍',
+            'author' => '異なる著者',
+        ]);
+        // Act
+        $response = $this->get(route('books.index', ['keyword' => '該当']));
+        // Assert
+        $response->assertOk()->assertViewHas('books',
+            function ($books) use ($matchingBook) {
+                return $books->count() === 1
+                    && $books->first()->id === $matchingBook->id;
+            }
+        );
+    }
+
+    /** @test */
+    public function index_ジャンル検索できる(): void
+    {
+        // Arrange
+        $genre = Genre::factory()->create();
+        $matchingBook = Book::factory()->create([
+            'title' => '該当書籍',
+            'author' => '該当著者',
+        ]);
+        $matchingBook->genres()->attach($genre);
+        Book::factory()->create([
+            'title' => '異なる書籍',
+            'author' => '異なる著者',
+        ]);
+        // Act
+        $response = $this->get(route('books.index', ['genre' => $genre->id]));
+        // Assert
+        $response->assertOk()->assertViewHas('books',
+            function ($books) use ($matchingBook) {
+                return $books->count() === 1
+                    && $books->first()->id === $matchingBook->id;
+            }
+        );
+    }
+
+    /** @test */
+    public function index_並び順を古い順に変更できる(): void
+    {
+        // Arrange
+        $oldBook = Book::factory()->create([
+            'title' => '古い書籍',
+            'created_at' => now()->subDays(2),
+        ]);
+        $newBook = Book::factory()->create([
+            'title' => '新しい書籍',
+            'created_at' => now(),
+        ]);
+        // Act
+        $response = $this->get(route('books.index', ['sort' => 'oldest']));
+        // Assert
+        $response->assertOk()->assertViewHas('books',
+            function ($books) use ($oldBook, $newBook) {
+                return $books->count() === 2
+                    && $books->first()->id === $oldBook->id
+                    && $books->last()->id === $newBook->id;
+            }
+        );
+    }
+
+    /** @test */
+    public function index_並び順を評価順に変更できる(): void
+    {
+        // Arrange
+        $lowBook = Book::factory()->create([
+            'title' => '評価の低い書籍',
+        ]);
+        Review::factory()->create([
+            'book_id' => $lowBook->id,
+            'rating' => 1,
+        ]);
+        $highBook = Book::factory()->create([
+            'title' => '評価の高い書籍',
+        ]);
+        Review::factory()->create([
+            'book_id' => $highBook->id,
+            'rating' => 5,
+        ]);
+        // Act
+        $response = $this->get(route('books.index', ['sort' => 'rating']));
+        // Assert
+        $response->assertOk()->assertViewHas('books',
+            function ($books) use ($lowBook, $highBook) {
+                return $books->count() === 2
+                    && $books->first()->id === $highBook->id
+                    && $books->last()->id === $lowBook->id;
+            }
+        );
+    }
+
+    /** @test */
+    public function index_並び順をタイトル順に変更できる(): void
+    {
+        // Arrange
+        $aBook = Book::factory()->create([
+            'title' => 'A書籍',
+        ]);
+        $bBook = Book::factory()->create([
+            'title' => 'B書籍',
+        ]);
+        // Act
+        $response = $this->get(route('books.index', ['sort' => 'title']));
+        // Assert
+        $response->assertOk()->assertViewHas('books',
+            function ($books) use ($aBook, $bBook) {
+                return $books->count() === 2
+                    && $books->first()->id === $aBook->id
+                    && $books->last()->id === $bBook->id;
+            }
+        );
     }
 
     /** @test */
@@ -184,5 +310,78 @@ class BookControllerTest extends TestCase
         $response = $this->actingAs($user)->delete(route('books.destroy', 99999));
         // Assert
         $response->assertNotFound();
+    }
+
+    /** @test */
+    public function isbn_isbnから書籍情報を取得できる(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $isbn = '9781234567890';
+        Http::fake([
+            'https://www.googleapis.com/books/v1/volumes*' => Http::response([
+                'items' => [[
+                    'volumeInfo' => [
+                        'title' => 'テスト書籍',
+                        'authors' => ['テスト著者'],
+                        'publishedDate' => '2026-09-01',
+                        'description' => 'テストです。',
+                        'imageLinks' => ['thumbnail' => 'https://example.com/image.jpg'],
+                    ],
+                ], ],
+            ], 200),
+        ]);
+        // Act
+        $response = $this->actingAs($user)->get(route('books.isbn', $isbn));
+        // Assert
+        $response->assertOk()->assertJson([
+            'title' => 'テスト書籍',
+            'author' => 'テスト著者',
+            'published_date' => '2026-09-01',
+            'description' => 'テストです。',
+            'image_url' => 'https://example.com/image.jpg',
+        ]);
+    }
+
+    /** @test */
+    public function isbn_13桁でない場合はエラー(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $isbn = '123456';
+        // Act
+        $response = $this->actingAs($user)->get(route('books.isbn', $isbn));
+        // Assert
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function isbn_通信エラー(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $isbn = '9781234567890';
+        Http::fake([
+            'https://www.googleapis.com/books/v1/volumes*' => Http::response([], 500),
+        ]);
+        // Act
+        $response = $this->actingAs($user)->get(route('books.isbn', $isbn));
+        // Assert
+        $response->assertStatus(500);
+    }
+
+    /** @test */
+    public function isbn_書籍が見つからない(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $isbn = '9781234567890';
+        Http::fake([
+            'https://www.googleapis.com/books/v1/volumes*' => Http::response(['totalItems' => 0], 200),
+        ]);
+        // Act
+        $response = $this->actingAs($user)->get(route('books.isbn', $isbn));
+        // Assert
+        $response->assertStatus(404);
     }
 }

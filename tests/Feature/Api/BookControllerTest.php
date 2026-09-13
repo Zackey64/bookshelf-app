@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class BookControllerTest extends TestCase
@@ -18,7 +19,7 @@ class BookControllerTest extends TestCase
         // Arrange
         Book::factory()->count(3)->create();
         // Act
-        $response = $this->getJson('/api/books');
+        $response = $this->getJson('/api/v1/books');
         // Assert
         $response->assertStatus(200);
         $response->assertOk()->assertJsonCount(3, 'data');
@@ -28,10 +29,50 @@ class BookControllerTest extends TestCase
     public function index_書籍一覧が0件の場合は空配列を返す(): void
     {
         // Act
-        $response = $this->getJson('/api/books');
+        $response = $this->getJson('/api/v1/books');
         // Assert
         $response->assertOk()->assertJsonCount(0, 'data');
         $response->assertOk()->assertJson(['data' => []]);
+    }
+
+    /** @test */
+    public function index_キーワード検索できる(): void
+    {
+        // Arrange
+        $matchingBook = Book::factory()->create([
+            'title' => '該当書籍',
+            'author' => '該当著者',
+        ]);
+        Book::factory()->create([
+            'title' => '異なる書籍',
+            'author' => '異なる著者',
+        ]);
+        // Act
+        $response = $this->getJson('/api/v1/books?keyword=該当');
+        // Assert
+        $response->assertOk()->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $matchingBook->id);
+    }
+
+    /** @test */
+    public function index_ジャンル検索できる(): void
+    {
+        // Arrange
+        $genre = Genre::factory()->create();
+        $matchingBook = Book::factory()->create([
+            'title' => '該当書籍',
+            'author' => '該当著者',
+        ]);
+        $matchingBook->genres()->attach($genre);
+        Book::factory()->create([
+            'title' => '異なる書籍',
+            'author' => '異なる著者',
+        ]);
+        // Act
+        $response = $this->getJson('/api/v1/books?genre='.$genre->id);
+        // Assert
+        $response->assertOk()->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $matchingBook->id);
     }
 
     /** @test */
@@ -40,7 +81,7 @@ class BookControllerTest extends TestCase
         // Arrange
         $book = Book::factory()->create();
         // Act
-        $response = $this->getJson("/api/books/{$book->id}");
+        $response = $this->getJson("/api/v1/books/{$book->id}");
         // Assert
         $response->assertOk()->assertJsonPath('data.id', $book->id);
     }
@@ -49,7 +90,7 @@ class BookControllerTest extends TestCase
     public function show_存在しない書籍の場合はエラー(): void
     {
         // Act
-        $response = $this->getJson('/api/books/999');
+        $response = $this->getJson('/api/v1/books/999');
         // Assert
         $response->assertNotFound();
     }
@@ -59,22 +100,21 @@ class BookControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $genre = Genre::factory()->create();
         $data = [
-            'user_id' => $user->id,
             'title' => 'テスト書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',
-            'published_date' => '2026-09-01',
             'genres' => [$genre->id],
         ];
         // Act
-        $response = $this->postJson('/api/books', $data);
+        $response = $this->postJson('/api/v1/books', $data);
         // Assert
         $response->assertCreated()->assertJsonPath('data.title', 'テスト書籍');
         $this->assertDatabaseHas('books', [
             'title' => 'テスト書籍',
-            'isbn' => '1234567890123',
+            'user_id' => $user->id,
         ]);
     }
 
@@ -83,18 +123,19 @@ class BookControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $genre = Genre::factory()->create();
-        $book = Book::factory()->create();
-        $data = [
+        Sanctum::actingAs($user);
+        $book = Book::factory()->create([
             'user_id' => $user->id,
+        ]);
+        $genre = Genre::factory()->create();
+        $data = [
             'title' => '更新後のテスト書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',
-            'published_date' => '2026-09-01',
             'genres' => [$genre->id],
         ];
         // Act
-        $response = $this->putJson("/api/books/{$book->id}", $data);
+        $response = $this->putJson("/api/v1/books/{$book->id}", $data);
         // Assert
         $response->assertOk()->assertJsonPath('data.title', '更新後のテスト書籍');
         $this->assertDatabaseHas('books', [
@@ -108,9 +149,9 @@ class BookControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $genre = Genre::factory()->create();
         $data = [
-            'user_id' => $user->id,
             'title' => '更新後のテスト書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',
@@ -118,7 +159,7 @@ class BookControllerTest extends TestCase
             'genres' => [$genre->id],
         ];
         // Act
-        $response = $this->putJson('/api/books/999', $data);
+        $response = $this->putJson('/api/v1/books/999', $data);
         // Assert
         $response->assertNotFound();
     }
@@ -127,9 +168,13 @@ class BookControllerTest extends TestCase
     public function destroy_書籍を削除できる(): void
     {
         // Arrange
-        $book = Book::factory()->create();
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $book = Book::factory()->create([
+            'user_id' => $user->id,
+        ]);
         // Act
-        $response = $this->deleteJson("/api/books/{$book->id}");
+        $response = $this->deleteJson("/api/v1/books/{$book->id}");
         // Assert
         $response->assertNoContent();
         $this->assertDatabaseMissing('books', [
@@ -140,8 +185,11 @@ class BookControllerTest extends TestCase
     /** @test */
     public function destroy_存在しない書籍の場合はエラー(): void
     {
+        // Arrange
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
         // Act
-        $response = $this->deleteJson('/api/books/999');
+        $response = $this->deleteJson('/api/v1/books/999');
         // Assert
         $response->assertNotFound();
     }

@@ -24,7 +24,6 @@ class BookRequestTest extends TestCase
             'title',
             'author',
             'isbn',
-            'published_date',
             'genres',
         ]);
     }
@@ -40,7 +39,6 @@ class BookRequestTest extends TestCase
             'title' => 'テスト書籍',
             'author' => 'テスト著者',
             'isbn' => $book->isbn,
-            'published_date' => '2026-09-01',
             'genres' => [$genre->id],
         ];
         // Act
@@ -67,7 +65,6 @@ class BookRequestTest extends TestCase
             'title',
             'author',
             'isbn',
-            'published_date',
             'genres',
         ]);
     }
@@ -86,7 +83,6 @@ class BookRequestTest extends TestCase
             'title' => '更新後のテスト書籍',
             'author' => 'テスト著者',
             'isbn' => $otherBook->isbn,
-            'published_date' => '2026-09-01',
             'genres' => [$genre->id],
         ];
         // Act
@@ -108,7 +104,6 @@ class BookRequestTest extends TestCase
             'title' => '更新後のテスト書籍',
             'author' => 'テスト著者',
             'isbn' => $book->isbn,
-            'published_date' => '2026-09-01',
             'genres' => [$genre->id],
         ];
         // Act

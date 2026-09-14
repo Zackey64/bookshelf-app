@@ -18,11 +18,16 @@ class BookResource extends JsonResource
             'published_date' => $this->published_date,
             'image_url' => $this->image_url,
             'description' => $this->description,
-            //
-            'genres' => $this->genres,
+
+            'genres' => GenreResource::collection(
+                $this->whenLoaded('genres')
+            ),
+            'reviews' => ReviewResource::collection(
+                $this->whenLoaded('reviews')
+            ),
+            
             'average_rating' => $this->reviews_avg_rating,
             'review_count' => $this->reviews_count,
-            'reviews' => $this->reviews,
         ];
     }
 }

@@ -168,6 +168,7 @@ class ReadingPlanControllerTest extends TestCase
             'status' => ReadingPlanStatus::InProgress,
         ]);
         $data = [
+            'book_id' => $readingPlan->book_id,
             'target_date' => now()->addDays(7)->toDateString(),
         ];
         // Act
@@ -189,6 +190,7 @@ class ReadingPlanControllerTest extends TestCase
             'status' => ReadingPlanStatus::InProgress,
         ]);
         $data = [
+            'book_id' => $readingPlan->book_id,
             'target_date' => now()->subDay()->toDateString(),
         ];
         // Act
@@ -207,6 +209,7 @@ class ReadingPlanControllerTest extends TestCase
             'status' => ReadingPlanStatus::Completed,
         ]);
         $data = [
+            'book_id' => $readingPlan->book_id,
             'target_date' => now()->addDays(7)->toDateString(),
         ];
         // Act
@@ -226,6 +229,7 @@ class ReadingPlanControllerTest extends TestCase
             'status' => ReadingPlanStatus::Expired,
         ]);
         $data = [
+            'book_id' => $readingPlan->book_id,
             'target_date' => now()->addDays(7)->toDateString(),
         ];
         // Act

@@ -12,22 +12,18 @@ Bladeはテンプレートを使用します。
 
 ```mermaid
 erDiagram
-    users ||--o{ reviews : "1対多 (投稿する)"
-    users ||--o{ favorites : "1対多"
-    users ||--o{ review_likes : "1対多 (いいねする)"
+    users ||--o{ books : "書籍を登録する"
+    users ||--o{ reviews : "レビューを投稿する"
+    users ||--o{ favorites : "お気に入り登録する"
+    users ||--o{ review_likes : "レビューにいいねする"
+    users ||--o{ reading_plans : "読書計画を作成する"
     
-    books ||--o{ reviews : "1対多 (レビューされる)"
-    books ||--o{ favorites : "1対多"
-    books ||--o{ book_genre : "1対多"
-    
-    genres ||--o{ book_genre : "1対多"
-    
-    reviews ||--o{ review_likes : "1対多"
-
-    users ||--o{ reading_plans : "1対多"
-    books ||--o{ reading_plans : "1対多"
-
-
+    books ||--o{ reviews : "レビューされる"
+    books ||--o{ favorites : "お気に入り登録される"
+    books ||--o{ book_genre : "ジャンルが設定される"
+    books ||--o{ reading_plans : "読書計画に設定される"
+    genres ||--o{ book_genre : "書籍に設定される"
+    reviews ||--o{ review_likes : "いいねされる"
 
     users {
         bigint id PK
@@ -42,6 +38,7 @@ erDiagram
 
     books {
         bigint id PK
+        bigint user_id FK
         string title
         string author
         string isbn

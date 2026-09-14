@@ -59,6 +59,7 @@ class ReadingPlanController extends Controller
     // 読書計画編集処理
     public function update(UpdateReadingPlanRequest $request, ReadingPlan $readingPlan): RedirectResponse
     {
+        $this->authorize('update', $readingPlan);
         $data = $request->validated();
         if ($readingPlan->status === ReadingPlanStatus::Expired) {
             $data['status'] = ReadingPlanStatus::InProgress;

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * 書籍モデル
+ */
 class Book extends Model
 {
     use HasFactory;
@@ -26,31 +29,51 @@ class Book extends Model
         'published_date' => 'date',
     ];
 
-    // この書籍を登録したユーザー（1対多の親）
+    /**
+     * 書籍を作成したユーザーを取得
+     *
+     * @return BelongsTo<User, Book>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // 書籍に紐づくジャンル一覧（多対多）
+    /**
+     * 書籍に紐づくジャンル一覧を取得
+     *
+     * @return BelongsToMany<Genre>
+     */
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class)->withTimestamps();
     }
 
-    // 書籍に対するレビュー一覧（1対多）
+    /**
+     * 書籍に対するレビュー一覧を取得
+     *
+     * @return HasMany<Review>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
-    // 書籍をお気に入り登録しているユーザー一覧（多対多）
+    /**
+     * 書籍をお気に入り登録しているユーザーを取得
+     *
+     * @return BelongsToMany<User>
+     */
     public function favoritedByUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }
 
-    // 【応用追加】1冊のBookは複数のReadingPlanから参照される（1対多の子）
+    /**
+     * 書籍に紐づく読書計画一覧を取得
+     *
+     * @return HasMany<ReadingPlan>
+     */
     public function readingPlans(): HasMany
     {
         return $this->hasMany(ReadingPlan::class);

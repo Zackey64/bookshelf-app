@@ -19,20 +19,27 @@ class ReadingPlan extends Model
         'status',
     ];
 
-    // キャスト
     protected $casts = [
         'target_date' => 'date',
         'completed_at' => 'datetime',
         'status' => ReadingPlanStatus::class, // 列挙型enum
     ];
 
-    // 1つのReadingPlanは1人のUserに所属する（1対多の親）
+    /**
+     * 読書計画を作成したユーザーを取得
+     *
+     * @return BelongsTo<User, ReadingPlan>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // 1つのReadingPlanは1冊のBookを対象にする（1対多の親）
+    /**
+     * 読書計画の対象となる書籍を取得
+     *
+     * @return BelongsTo<Book, ReadingPlan>
+     */
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);

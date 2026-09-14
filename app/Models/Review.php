@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * レビューモデル
+ */
 class Review extends Model
 {
     use HasFactory;
@@ -18,19 +21,31 @@ class Review extends Model
         'comment',
     ];
 
-    // レビューが投稿された書籍（多対1）
+    /**
+     * レビューを作成した書籍を取得
+     *
+     * @return BelongsTo<Book, Review>
+     */
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
     }
 
-    // レビューを投稿したユーザー（多対1）
+    /**
+     * レビューを作成したユーザーを取得
+     *
+     * @return BelongsTo<User, Review>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // レビューに対していいねしたユーザー一覧（多対多）
+    /**
+     * レビューに紐づくいいねしたユーザー一覧を取得
+     *
+     * @return BelongsToMany<User>
+     */
     public function likedByUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'review_likes')->withTimestamps();

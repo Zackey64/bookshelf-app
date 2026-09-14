@@ -10,6 +10,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * ユーザーモデル
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -45,31 +48,51 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    // ユーザーが登録（作成）した書籍一覧（1対多の子）
+    /**
+     * ユーザーが登録した書籍一覧を取得
+     *
+     * @return HasMany<Book>
+     */
     public function books(): HasMany
     {
         return $this->hasMany(Book::class);
     }
 
-    // ユーザーが投稿したレビュー一覧（1対多）
+    /**
+     * ユーザーが投稿したレビュー一覧を取得
+     *
+     * @return HasMany<Review>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
-    // ユーザーがお気に入りに登録した書籍一覧（多対多）
+    /**
+     * ユーザーがお気に入りに登録した書籍一覧を取得
+     *
+     * @return BelongsToMany<Book>
+     */
     public function favoriteBooks(): BelongsToMany
     {
         return $this->belongsToMany(Book::class, 'favorites')->withTimestamps();
     }
 
-    // ユーザーがいいねしたレビュー一覧（多対多）
+    /**
+     * ユーザーがいいねしたレビュー一覧を取得
+     *
+     * @return BelongsToMany<Review>
+     */
     public function likedReviews(): BelongsToMany
     {
         return $this->belongsToMany(Review::class, 'review_likes')->withTimestamps();
     }
 
-    // 【応用追加】1人のUserは複数のReadingPlanを持つ（1対多の子）
+    /**
+     * ユーザーが作成した読書計画一覧を取得
+     *
+     * @return HasMany<ReadingPlan>
+     */
     public function readingPlans(): HasMany
     {
         return $this->hasMany(ReadingPlan::class);

@@ -8,11 +8,17 @@ use App\Http\Requests\Api\V1\StoreBookRequest;
 use App\Http\Requests\Api\V1\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
+use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * 書籍APIコントローラー
+ */
 class BookController extends Controller
 {
-    // 一覧
-    public function index(IndexBookRequest $request)
+    /**
+     *  書籍の一覧を取得
+     */
+    public function index(IndexBookRequest $request): JsonResource
     {
         $query = Book::query()->with('genres')->withAvg('reviews', 'rating')->withCount('reviews');
         // キーワード検索
@@ -36,7 +42,9 @@ class BookController extends Controller
         return BookResource::collection($books);
     }
 
-    // 詳細
+    /**
+     *  書籍の詳細を取得
+     */
     public function show(Book $book)
     {
         $book->load([
@@ -50,7 +58,9 @@ class BookController extends Controller
         return new BookResource($book);
     }
 
-    // 作成
+    /**
+     * 書籍を登録する処理
+     */
     public function store(StoreBookRequest $request)
     {
         $validated = $request->validated();
@@ -66,7 +76,9 @@ class BookController extends Controller
         return new BookResource($book)->response()->setStatusCode(201);
     }
 
-    // 編集
+    /**
+     * 書籍を更新する処理
+     */
     public function update(UpdateBookRequest $request, Book $book)
     {
         $this->authorize('update', $book);
@@ -83,7 +95,9 @@ class BookController extends Controller
         return new BookResource($book)->response()->setStatusCode(200);
     }
 
-    // 削除
+    /**
+     * 書籍を削除する処理
+     */
     public function destroy(Book $book)
     {
         $this->authorize('delete', $book);

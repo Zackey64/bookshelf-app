@@ -21,10 +21,11 @@ class StoreReadingPlanRequest extends FormRequest
             'book_id' => ['required', 'integer', 'exists:books,id',
                 Rule::unique('reading_plans', 'book_id')->where(
                     function ($query) {
-                        $query->where('user_id', $this->user()->id)->where('status', [
-                            ReadingPlanStatus::InProgress->value,
-                            ReadingPlanStatus::Expired->value,
-                        ]);
+                        $query->where('user_id', $this->user()->id)
+                            ->whereIn('status', [
+                                ReadingPlanStatus::InProgress->value,
+                                ReadingPlanStatus::Expired->value,
+                            ]);
                     }
                 ),
             ],

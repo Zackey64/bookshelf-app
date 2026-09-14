@@ -61,6 +61,7 @@ class BookRequestTest extends TestCase
             'user_id' => $user->id,
         ]);
         $data = [
+            'user_id' => $user->id,
             'title' => '更新後のテスト書籍',
             'author' => 'テスト著者',
             'isbn' => $book->isbn,
@@ -85,6 +86,7 @@ class BookRequestTest extends TestCase
         $otherBook = Book::factory()->create();
 
         $data = [
+            'user_id' => $user->id,
             'title' => '更新後のテスト書籍',
             'author' => 'テスト著者',
             'isbn' => $otherBook->isbn,

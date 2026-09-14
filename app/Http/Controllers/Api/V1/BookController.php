@@ -5,34 +5,37 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreBookRequest;
 use App\Http\Requests\Api\V1\UpdateBookRequest;
+use App\Http\Requests\Api\V1\IndexBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 
 class BookController extends Controller
 {
     // 一覧
-    public function index()
+    public function index(IndexBookRequest $request)
     {
         $query = Book::query()->with('genres')->withAvg('reviews', 'rating')->withCount('reviews');
         // キーワード検索
-        if (request('keyword')) {
-            $keyword = request('keyword');
+        if ($request->filled('keyword')) {
+            $keyword = $request->validated('keyword');
             $query->where(function ($query) use ($keyword) {
                 $query->where('title', 'like', "%{$keyword}%")
                     ->orWhere('author', 'like', "%{$keyword}%");
             });
         }
         // ジャンル絞り込み
-        if (request('genre')) {
-            $query->whereHas('genres', function ($query) {
-                $query->where('genres.id', request('genre'));
+        if ($request->filled('genre')) {
+            $query->whereHas('genres', function ($query) use ($request) {
+                $query->where('genres.id', $request->validated('genre'));
             });
         }
 
-        $books = $query
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        $books = $query->latest()->paginate(
+            $request->validated('per_page', 10),
+            ['*'],
+            'page',
+            $request->validated('page', 1)
+        );
 
         return BookResource::collection($books);
     }

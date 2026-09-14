@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 // 書籍ルート
 Route::prefix('v1')->group(function () {
     // 公開
-    Route::get('/books', [BookController::class, 'index']);
-    Route::get('/books/{book}', [BookController::class, 'show']);
+    Route::get('/books', [BookController::class, 'index'])->name('api.books.index');
+    Route::get('/books/{book}', [BookController::class, 'show'])->name('api.books.show');
 
     // Sanctum認証必須
     Route::middleware('auth:sanctum')->group(function () {

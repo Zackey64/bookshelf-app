@@ -19,7 +19,7 @@ class BookControllerTest extends TestCase
         // Arrange
         Book::factory()->count(3)->create();
         // Act
-        $response = $this->getJson('/api/v1/books');
+        $response = $this->getJson(route('api.books.index', []));
         // Assert
         $response->assertStatus(200);
         $response->assertOk()->assertJsonCount(3, 'data');
@@ -29,7 +29,7 @@ class BookControllerTest extends TestCase
     public function index_書籍一覧が0件の場合は空配列を返す(): void
     {
         // Act
-        $response = $this->getJson('/api/v1/books');
+        $response = $this->getJson(route('api.books.index', []));
         // Assert
         $response->assertOk()->assertJsonCount(0, 'data');
         $response->assertOk()->assertJson(['data' => []]);
@@ -48,7 +48,7 @@ class BookControllerTest extends TestCase
             'author' => '異なる著者',
         ]);
         // Act
-        $response = $this->getJson('/api/v1/books?keyword=該当');
+        $response = $this->getJson(route('api.books.index', ['keyword' => '該当']));
         // Assert
         $response->assertOk()->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $matchingBook->id);
@@ -69,7 +69,7 @@ class BookControllerTest extends TestCase
             'author' => '異なる著者',
         ]);
         // Act
-        $response = $this->getJson('/api/v1/books?genre='.$genre->id);
+        $response = $this->getJson(route('api.books.index', ['genre' => $genre->id]));
         // Assert
         $response->assertOk()->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $matchingBook->id);
@@ -81,7 +81,7 @@ class BookControllerTest extends TestCase
         // Arrange
         $book = Book::factory()->create();
         // Act
-        $response = $this->getJson("/api/v1/books/{$book->id}");
+        $response = $this->getJson(route('api.books.show', $book));
         // Assert
         $response->assertOk()->assertJsonPath('data.id', $book->id);
     }
@@ -103,6 +103,7 @@ class BookControllerTest extends TestCase
         Sanctum::actingAs($user);
         $genre = Genre::factory()->create();
         $data = [
+            'user_id' => $user->id,
             'title' => 'テスト書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',
@@ -129,6 +130,7 @@ class BookControllerTest extends TestCase
         ]);
         $genre = Genre::factory()->create();
         $data = [
+            'user_id' => $user->id,
             'title' => '更新後のテスト書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',

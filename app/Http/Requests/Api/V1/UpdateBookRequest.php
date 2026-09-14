@@ -19,6 +19,7 @@ class UpdateBookRequest extends FormRequest
         $bookId = $this->route('book');
 
         return [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
             'isbn' => ['required',  'regex:/^[0-9]{13}$/', Rule::unique('books', 'isbn')->ignore($bookId)],
@@ -35,6 +36,9 @@ class UpdateBookRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'user_id.required' => '登録者IDは必須です。',
+            'user_id.exists' => '指定された登録者が存在しません。',
+
             'title.required' => 'タイトルは必須です。',
             'title.max' => 'タイトルは255文字以内で入力してください。',
 

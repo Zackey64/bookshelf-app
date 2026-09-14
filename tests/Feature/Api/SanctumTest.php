@@ -21,6 +21,7 @@ class SanctumTest extends TestCase
         Sanctum::actingAs($user);
         $genre = Genre::factory()->create();
         $data = [
+            'user_id' => $user->id,
             'title' => 'テスト書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',
@@ -40,8 +41,10 @@ class SanctumTest extends TestCase
     public function store_未認証ユーザーは書籍を追加できない(): void
     {
         // Arrange
+        $user = User::factory()->create();
         $genre = Genre::factory()->create();
         $data = [
+            'user_id' => $user->id,
             'title' => 'テスト書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',
@@ -64,6 +67,7 @@ class SanctumTest extends TestCase
         ]);
         $genre = Genre::factory()->create();
         $data = [
+            'user_id' => $user->id,
             'title' => '更新後の書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',
@@ -89,6 +93,7 @@ class SanctumTest extends TestCase
         ]);
         $genre = Genre::factory()->create();
         $data = [
+            'user_id' => $user->id,
             'title' => '更新後の書籍',
             'author' => 'テスト著者',
             'isbn' => '1234567890123',

@@ -24,7 +24,6 @@ class StoreReadingPlanRequest extends FormRequest
                         $query->where('user_id', $this->user()->id)
                             ->whereIn('status', [
                                 ReadingPlanStatus::InProgress->value,
-                                ReadingPlanStatus::Expired->value,
                             ]);
                     }
                 ),

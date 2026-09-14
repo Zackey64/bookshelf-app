@@ -69,7 +69,7 @@ class BookControllerTest extends TestCase
             'author' => '異なる著者',
         ]);
         // Act
-        $response = $this->getJson(route('api.books.index', ['genre' => $genre->id]));
+        $response = $this->getJson(route('api.books.index', ['genre_id' => $genre->id]));
         // Assert
         $response->assertOk()->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $matchingBook->id);

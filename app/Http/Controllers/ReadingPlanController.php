@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateReadingPlanRequest;
 use App\Models\Book;
 use App\Models\ReadingPlan;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ReadingPlanController extends Controller
@@ -74,8 +75,11 @@ class ReadingPlanController extends Controller
     public function destroy(ReadingPlan $readingPlan): RedirectResponse
     {
         $this->authorize('delete', $readingPlan);
-        auth()->user()->notifications()->where('data->reading_plan_id', $readingPlan->id)->delete();
-        $readingPlan->delete();
+        DB::transaction(function () use ($readingPlan) {
+            auth()->user()->notifications()
+                ->where('data->reading_plan_id', $readingPlan->id)->delete();
+            $readingPlan->delete();
+        });
 
         return redirect()->route('reading-plans.index')->with('success', '読書計画を削除しました。');
     }

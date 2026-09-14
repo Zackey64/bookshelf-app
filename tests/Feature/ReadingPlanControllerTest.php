@@ -134,27 +134,6 @@ class ReadingPlanControllerTest extends TestCase
     }
 
     /** @test */
-    public function store_期限切れの同じ本は登録できない(): void
-    {
-        // Arrange
-        $user = User::factory()->create();
-        $book = Book::factory()->create();
-        ReadingPlan::factory()->create([
-            'user_id' => $user->id,
-            'book_id' => $book->id,
-            'status' => ReadingPlanStatus::Expired,
-        ]);
-        $data = [
-            'book_id' => $book->id,
-            'target_date' => now()->addDays(7)->toDateString(),
-        ];
-        // Act
-        $response = $this->actingAs($user)->post(route('reading-plans.store'), $data);
-        // Assert
-        $response->assertSessionHasErrors('book_id');
-    }
-
-    /** @test */
     public function edit_読書計画編集画面を表示できる(): void
     {
         // Arrange
@@ -186,6 +165,7 @@ class ReadingPlanControllerTest extends TestCase
         $user = User::factory()->create();
         $readingPlan = ReadingPlan::factory()->create([
             'user_id' => $user->id,
+            'status' => ReadingPlanStatus::InProgress,
         ]);
         $data = [
             'target_date' => now()->addDays(7)->toDateString(),
@@ -206,6 +186,7 @@ class ReadingPlanControllerTest extends TestCase
         $user = User::factory()->create();
         $readingPlan = ReadingPlan::factory()->create([
             'user_id' => $user->id,
+            'status' => ReadingPlanStatus::InProgress,
         ]);
         $data = [
             'target_date' => now()->subDay()->toDateString(),

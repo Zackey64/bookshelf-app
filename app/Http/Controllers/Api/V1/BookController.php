@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\IndexBookRequest;
 use App\Http\Requests\Api\V1\StoreBookRequest;
 use App\Http\Requests\Api\V1\UpdateBookRequest;
-use App\Http\Requests\Api\V1\IndexBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 
@@ -24,18 +24,14 @@ class BookController extends Controller
             });
         }
         // ジャンル絞り込み
-        if ($request->filled('genre')) {
+        if ($request->filled('genre_id')) {
             $query->whereHas('genres', function ($query) use ($request) {
-                $query->where('genres.id', $request->validated('genre'));
+                $query->where('genres.id', $request->validated('genre_id'));
             });
         }
 
-        $books = $query->latest()->paginate(
-            $request->validated('per_page', 10),
-            ['*'],
-            'page',
-            $request->validated('page', 1)
-        );
+        $perPage = $request->validated('per_page', 20);
+        $books = $query->paginate($perPage);
 
         return BookResource::collection($books);
     }
@@ -44,6 +40,8 @@ class BookController extends Controller
     public function show(Book $book)
     {
         $book->load(['genres', 'reviews.user']);
+        $book->loadAvg('reviews', 'rating');
+        $book->loadCount('reviews');
 
         return new BookResource($book);
     }

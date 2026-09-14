@@ -6,13 +6,19 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreGenreRequest extends FormRequest
 {
-    //
+    /**
+     * ジャンルを追加するリクエストを許可
+     */
     public function authorize(): bool
     {
         return true;
     }
 
-    //
+    /**
+     * ジャンル追加時のバリデーションルールを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function rules(): array
     {
         return [
@@ -20,7 +26,11 @@ class StoreGenreRequest extends FormRequest
         ];
     }
 
-    //
+    /**
+     * ジャンル追加時のバリデーションメッセージを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function messages(): array
     {
         return [

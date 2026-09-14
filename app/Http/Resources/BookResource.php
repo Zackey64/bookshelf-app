@@ -7,7 +7,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookResource extends JsonResource
 {
-    //
+    /**
+     * 書籍のAPIレスポンスを配列として返す
+     *
+     * @param  Request  $request  現在のHTTPリクエスト
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -25,7 +30,7 @@ class BookResource extends JsonResource
             'reviews' => ReviewResource::collection(
                 $this->whenLoaded('reviews')
             ),
-            
+
             'average_rating' => $this->reviews_avg_rating,
             'review_count' => $this->reviews_count,
         ];

@@ -8,13 +8,19 @@ use Illuminate\Validation\Rule;
 
 class StoreReadingPlanRequest extends FormRequest
 {
-    //
+    /**
+     * 読書計画を追加するリクエストを許可
+     */
     public function authorize(): bool
     {
         return true;
     }
 
-    //
+    /**
+     * 読書計画追加時のバリデーションルールを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function rules(): array
     {
         return [
@@ -32,7 +38,11 @@ class StoreReadingPlanRequest extends FormRequest
         ];
     }
 
-    //
+    /**
+     * 読書計画追加時のバリデーションメッセージを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function messages(): array
     {
         return [

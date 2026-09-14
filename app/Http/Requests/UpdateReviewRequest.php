@@ -6,13 +6,19 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateReviewRequest extends FormRequest
 {
-    //
+    /**
+     * レビューを更新するリクエストを許可
+     */
     public function authorize(): bool
     {
         return true;
     }
 
-    //
+    /**
+     * レビュー更新時のバリデーションルールを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function rules(): array
     {
         return [
@@ -21,7 +27,11 @@ class UpdateReviewRequest extends FormRequest
         ];
     }
 
-    //
+    /**
+     * レビュー更新時のバリデーションメッセージを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function messages(): array
     {
         return [

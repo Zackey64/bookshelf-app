@@ -7,13 +7,19 @@ use Illuminate\Validation\Rule;
 
 class UpdateBookRequest extends FormRequest
 {
-    //
+    /**
+     * 書籍を更新するリクエストを許可
+     */
     public function authorize(): bool
     {
         return true;
     }
 
-    // バリテーションルールメソッド
+    /**
+     * 書籍更新時のバリデーションルールを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function rules(): array
     {
         $bookId = $this->route('book');
@@ -31,7 +37,11 @@ class UpdateBookRequest extends FormRequest
         ];
     }
 
-    // バリテーションメッセージメソッド
+    /**
+     * 書籍更新時のバリデーションメッセージを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function messages(): array
     {
         return [

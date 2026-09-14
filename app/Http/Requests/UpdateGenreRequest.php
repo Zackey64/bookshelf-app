@@ -7,13 +7,19 @@ use Illuminate\Validation\Rule;
 
 class UpdateGenreRequest extends FormRequest
 {
-    //
+    /**
+     * ジャンルを更新するリクエストを許可
+     */
     public function authorize(): bool
     {
         return true;
     }
 
-    //
+    /**
+     * ジャンル更新時のバリデーションルールを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function rules(): array
     {
         $genreId = $this->route('genre');
@@ -28,7 +34,11 @@ class UpdateGenreRequest extends FormRequest
         ];
     }
 
-    //
+    /**
+     * ジャンル更新時のバリデーションメッセージを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function messages(): array
     {
         return [

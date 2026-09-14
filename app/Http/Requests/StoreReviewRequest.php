@@ -6,13 +6,19 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreReviewRequest extends FormRequest
 {
-    //
+    /**
+     * レビューを追加するリクエストを許可
+     */
     public function authorize(): bool
     {
         return true;
     }
 
-    //
+    /**
+     * レビュー追加時のバリデーションルールを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function rules(): array
     {
         return [
@@ -21,7 +27,11 @@ class StoreReviewRequest extends FormRequest
         ];
     }
 
-    //
+    /**
+     * レビュー追加時のバリデーションメッセージを取得
+     *
+     * @return array<string, array<int, mixed>>
+     */
     public function messages(): array
     {
         return [

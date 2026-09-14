@@ -11,9 +11,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
+/**
+ * 読書計画コントローラー
+ */
 class ReadingPlanController extends Controller
 {
-    // 読書計画一覧画面
+    /**
+     * 読書計画の一覧を表示
+     */
     public function index(): View
     {
         $query = auth()->user()->readingPlans()->with('book');
@@ -28,7 +33,9 @@ class ReadingPlanController extends Controller
         ]);
     }
 
-    // 読書計画登録画面
+    /**
+     * 読書計画の作成画面を表示
+     */
     public function create(): View
     {
         $books = Book::orderBy('title')->get();
@@ -36,7 +43,9 @@ class ReadingPlanController extends Controller
         return view('reading-plans.create', compact('books'));
     }
 
-    // 読書計画登録処理
+    /**
+     * 読書計画を登録する処理
+     */
     public function store(StoreReadingPlanRequest $request): RedirectResponse
     {
         $request->user()->readingPlans()->create([
@@ -48,7 +57,9 @@ class ReadingPlanController extends Controller
         return redirect()->route('reading-plans.index')->with('success', '読書計画を登録しました。');
     }
 
-    // 読書計画編集画面
+    /**
+     * 読書計画の編集画面を表示
+     */
     public function edit(ReadingPlan $readingPlan): View
     {
         $this->authorize('update', $readingPlan);
@@ -57,7 +68,9 @@ class ReadingPlanController extends Controller
         return view('reading-plans.edit', compact('readingPlan'));
     }
 
-    // 読書計画編集処理
+    /**
+     * 読書計画を更新する処理
+     */
     public function update(UpdateReadingPlanRequest $request, ReadingPlan $readingPlan): RedirectResponse
     {
         $this->authorize('update', $readingPlan);
@@ -71,7 +84,9 @@ class ReadingPlanController extends Controller
         return redirect()->route('reading-plans.index')->with('success', '読書計画を更新しました。');
     }
 
-    // 読書計画削除処理
+    /**
+     * 読書計画を削除する処理
+     */
     public function destroy(ReadingPlan $readingPlan): RedirectResponse
     {
         $this->authorize('delete', $readingPlan);
@@ -84,7 +99,9 @@ class ReadingPlanController extends Controller
         return redirect()->route('reading-plans.index')->with('success', '読書計画を削除しました。');
     }
 
-    // 読書計画読了
+    /**
+     * 読書計画を読了する処理
+     */
     public function complete(ReadingPlan $readingPlan): RedirectResponse
     {
         $this->authorize('complete', $readingPlan);

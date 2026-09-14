@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
+/**
+ * お気に入り書籍コントローラー
+ */
 class FavoriteController extends Controller
 {
-    // お気に入り一覧画面
-    public function index()
+    /**
+     * お気に入り書籍の一覧を表示
+     */
+    public function index(): View
     {
         $books = auth()->user()->favoriteBooks()
             ->latest('favorites.created_at')->paginate(10);
@@ -15,8 +22,10 @@ class FavoriteController extends Controller
         return view('favorites.index', compact('books'));
     }
 
-    // お気に入り登録解除処理
-    public function toggle(Book $book)
+    /**
+     * お気に入り書籍を登録・解除する処理
+     */
+    public function toggle(Book $book): RedirectResponse
     {
         // このユーザーのお気に入り書籍
         $favoriteBooks = auth()->user()->favoriteBooks();

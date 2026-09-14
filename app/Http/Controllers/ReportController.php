@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
+/**
+ * 書籍レポートコントローラー
+ */
 class ReportController extends Controller
 {
-    //
+    /**
+     * 書籍レポートの一覧を表示
+     */
     public function index(): View
     {
         $user = auth()->user();

@@ -7,12 +7,19 @@ use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Http;
+use Illuminate\View\View;
 
+/**
+ * 書籍コントローラー
+ */
 class BookController extends Controller
 {
-    // 書籍一覧画面
-    public function index()
+    /**
+     * 書籍の一覧を表示
+     */
+    public function index(): View
     {
 
         $query = Book::query()->with('genres')->withAvg('reviews', 'rating');
@@ -59,16 +66,20 @@ class BookController extends Controller
         return view('books.index', compact('books', 'genres'));
     }
 
-    // 書籍登録画面
-    public function create()
+    /**
+     * 書籍の作成画面を表示
+     */
+    public function create(): View
     {
         $genres = Genre::all();
 
         return view('books.create', compact('genres'));
     }
 
-    // 書籍登録処理
-    public function store(StoreBookRequest $request)
+    /**
+     * 書籍を登録する処理
+     */
+    public function store(StoreBookRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $book = auth()->user()->books()->create([
@@ -84,8 +95,10 @@ class BookController extends Controller
         return redirect()->route('books.show', $book)->with('success', '書籍を登録しました。');
     }
 
-    // 書籍詳細画面
-    public function show(Book $book)
+    /**
+     * 書籍の詳細画面を表示
+     */
+    public function show(Book $book): View
     {
         $book->load([
             'genres',
@@ -95,8 +108,10 @@ class BookController extends Controller
         return view('books.show', compact('book'));
     }
 
-    // 書籍編集画面
-    public function edit(Book $book)
+    /**
+     * 書籍の編集画面を表示
+     */
+    public function edit(Book $book): View
     {
         // 認可
         $this->authorize('update', $book);
@@ -105,8 +120,10 @@ class BookController extends Controller
         return view('books.edit', compact('book', 'genres'));
     }
 
-    // 書籍編集処理
-    public function update(UpdateBookRequest $request, Book $book)
+    /**
+     * 書籍を更新する処理
+     */
+    public function update(UpdateBookRequest $request, Book $book): RedirectResponse
     {
         // 認可
         $this->authorize('update', $book);
@@ -124,8 +141,10 @@ class BookController extends Controller
         return redirect()->route('books.show', $book)->with('success', '書籍を更新しました。');
     }
 
-    // 書籍削除処理
-    public function destroy(Book $book)
+    /**
+     * 書籍を削除する処理
+     */
+    public function destroy(Book $book): RedirectResponse
     {
         // 認可
         $this->authorize('delete', $book);
@@ -134,7 +153,9 @@ class BookController extends Controller
         return redirect()->route('books.index')->with('success', '書籍を削除しました。');
     }
 
-    // ISBN検索
+    /**
+     * 書籍をAPIでISBN検索する処理
+     */
     public function isbn(string $isbn): JsonResponse
     {
         // ISBNが13桁の数字かチェック

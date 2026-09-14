@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreGenreRequest;
 use App\Http\Requests\UpdateGenreRequest;
 use App\Models\Genre;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
+/**
+ * ジャンルコントローラー
+ */
 class GenreController extends Controller
 {
-    // ジャンル一覧画面
-    public function index()
+    /**
+     * ジャンルの一覧を表示
+     */
+    public function index(): View
     {
         // 全ジャンルを取得＋紐づいている書籍数を追加取得
         $genres = Genre::withCount('books')->get();
@@ -18,15 +25,19 @@ class GenreController extends Controller
         return view('genres.index', compact('genres'));
     }
 
-    // ジャンル登録画面
-    public function create()
+    /**
+     * ジャンルの作成画面を表示
+     */
+    public function create(): View
     {
         // 画面表示
         return view('genres.create');
     }
 
-    // ジャンル登録処理
-    public function store(StoreGenreRequest $request)
+    /**
+     * ジャンルを登録する処理
+     */
+    public function store(StoreGenreRequest $request): RedirectResponse
     {
         // ジャンル作成
         Genre::create($request->validated());
@@ -35,8 +46,10 @@ class GenreController extends Controller
         return redirect()->route('genres.index')->with('success', 'ジャンルを登録しました。');
     }
 
-    // ジャンル詳細画面
-    public function show(Genre $genre)
+    /**
+     * ジャンルの詳細画面を表示
+     */
+    public function show(Genre $genre): View
     {
         // ジャンルに紐づいている書籍を取得
         $books = $genre->books()->latest()->paginate(10);
@@ -45,15 +58,19 @@ class GenreController extends Controller
         return view('genres.show', compact('genre', 'books'));
     }
 
-    // ジャンル編集画面
-    public function edit(Genre $genre)
+    /**
+     * ジャンルの編集画面を表示
+     */
+    public function edit(Genre $genre): View
     {
         // 画面表示
         return view('genres.edit', compact('genre'));
     }
 
-    // ジャンル更新処理
-    public function update(UpdateGenreRequest $request, Genre $genre)
+    /**
+     * ジャンルを更新する処理
+     */
+    public function update(UpdateGenreRequest $request, Genre $genre): RedirectResponse
     {
         // ジャンル更新
         $genre->update($request->validated());
@@ -62,8 +79,10 @@ class GenreController extends Controller
         return redirect()->route('genres.index')->with('success', 'ジャンルを更新しました。');
     }
 
-    // ジャンル削除処理
-    public function destroy(Genre $genre)
+    /**
+     * ジャンルを削除する処理
+     */
+    public function destroy(Genre $genre): RedirectResponse
     {
         // 紐付きがある場合は削除を制限
         if ($genre->books()->exists()) {

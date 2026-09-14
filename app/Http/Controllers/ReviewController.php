@@ -6,11 +6,18 @@ use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Book;
 use App\Models\Review;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
+/**
+ * レビューコントローラー
+ */
 class ReviewController extends Controller
 {
-    // レビュー投稿
-    public function store(StoreReviewRequest $request, Book $book)
+    /**
+     * レビューを登録する処理
+     */
+    public function store(StoreReviewRequest $request, Book $book): RedirectResponse
     {
         $validated = $request->validated();
         $book->reviews()->create([
@@ -22,8 +29,10 @@ class ReviewController extends Controller
         return redirect()->route('books.show', $book)->with('success', 'レビューを投稿しました。');
     }
 
-    // レビュー編集画面
-    public function edit(Review $review)
+    /**
+     * レビューの編集画面を表示
+     */
+    public function edit(Review $review): View
     {
         // 認可
         $this->authorize('update', $review);
@@ -31,8 +40,10 @@ class ReviewController extends Controller
         return view('reviews.edit', compact('review'));
     }
 
-    // レビュー編集処理
-    public function update(UpdateReviewRequest $request, Review $review)
+    /**
+     * レビューを更新する処理
+     */
+    public function update(UpdateReviewRequest $request, Review $review): RedirectResponse
     {
         // 認可
         $this->authorize('update', $review);
@@ -41,8 +52,10 @@ class ReviewController extends Controller
         return redirect()->route('books.show', $review->book)->with('success', 'レビューを更新しました。');
     }
 
-    //
-    public function destroy(Review $review)
+    /**
+     * レビューを削除する処理
+     */
+    public function destroy(Review $review): RedirectResponse
     {
         // 認可
         $this->authorize('delete', $review);
@@ -52,9 +65,9 @@ class ReviewController extends Controller
     }
 
     /**
-     * レビューいいね
+     * レビューにいいねを登録・解除する処理
      */
-    public function like(Review $review)
+    public function like(Review $review): RedirectResponse
     {
         // このユーザーのいいね一覧
         $likedReviews = auth()->user()->likedReviews();

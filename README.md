@@ -57,11 +57,8 @@ erDiagram
     }
 
     book_genre {
-        bigint id PK
-        bigint book_id FK
-        bigint genre_id FK
-        timestamps created_at
-        timestamps updated_at
+        bigint book_id PK
+        bigint genre_id PK
     }
 
     reviews {
